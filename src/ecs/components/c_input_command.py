@@ -6,6 +6,7 @@ class CInputCommand:
         self.name = name
         self.key = key
         self.phase = CommandPhase.NA
+        self.mouse_pos = None
         
 class CommandPhase(Enum):
     NA = 0

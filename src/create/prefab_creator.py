@@ -7,6 +7,7 @@ from src.ecs.components.c_input_command import CInputCommand
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
+from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 
@@ -58,6 +59,24 @@ def create_player_square(world: esper.World, player_info:dict, level_info:dict):
     
     return player_entity
 
+def create_bullet_square(world: esper.World, bullet_info:dict, pos:pygame.Vector2, direction: pygame.Vector2):
+    size = pygame.Vector2(bullet_info["size"]["x"],
+                          bullet_info["size"]["x"])
+    
+    color = pygame.Color(
+        bullet_info["color"]["r"],
+        bullet_info["color"]["g"],
+        bullet_info["color"]["b"],
+        255,
+        )
+    
+    velocity = direction.normalize() *  bullet_info["velocity"]
+    
+    bullet_entity = create_square(world, size, pos, velocity, color)
+    world.add_component(bullet_entity, CTagBullet())
+    return bullet_entity
+    
+
 def create_enemy_spawner(world: esper.World, level_data: dict):
     spawner_entity = world.create_entity()
     world.add_component(spawner_entity, CEnemySpawner(level_data["enemy_spawn_events"]))
@@ -67,8 +86,10 @@ def create_input_player(world: esper.World):
     input_right = world.create_entity()
     input_up = world.create_entity()
     input_down = world.create_entity()
+    input_fire = world.create_entity()
     
     world.add_component(input_left, CInputCommand("PLAYER_LEFT", pygame.K_LEFT))
     world.add_component(input_right, CInputCommand("PLAYER_RIGHT", pygame.K_RIGHT))
     world.add_component(input_up, CInputCommand("PLAYER_UP", pygame.K_UP))
     world.add_component(input_down, CInputCommand("PLAYER_DOWN", pygame.K_DOWN))
+    world.add_component(input_fire, CInputCommand("PLAYER_FIRE", pygame.MOUSEBUTTONDOWN))

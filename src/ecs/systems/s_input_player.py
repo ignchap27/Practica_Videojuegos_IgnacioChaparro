@@ -15,3 +15,14 @@ def system_input_player(world: esper.World, event:pygame.event.Event,
         if event.type == pygame.KEYUP and c_input.key == event.key:
             c_input.phase = CommandPhase.END
             do_action(c_input)
+            
+        if event.type == pygame.MOUSEBUTTONDOWN and c_input.name == "PLAYER_FIRE":
+            if event.button == 1:
+                c_input.phase = CommandPhase.START
+                c_input.mouse_pos = event.pos
+                do_action(c_input)   
+        if event.type == pygame.MOUSEBUTTONUP and c_input.name == "PLAYER_FIRE":
+            if event.button == 1:
+                c_input.phase = CommandPhase.END
+                c_input.mouse_pos = event.pos
+                do_action(c_input)
