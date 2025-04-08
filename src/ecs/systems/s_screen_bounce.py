@@ -4,10 +4,11 @@ import esper
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.c_surface import CSurface
+from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 
 
 def system_screen_bounce(world: esper.World, screen_rect: pygame.Rect):
-    query = world.get_components(CTransform, CVelocity, CSurface)
+    query = world.get_components(CTransform, CVelocity, CSurface, CTagEnemy)
 
     for _, components in query:
         c_t: CTransform = components[0]

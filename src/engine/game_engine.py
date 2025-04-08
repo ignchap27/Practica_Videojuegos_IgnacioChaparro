@@ -3,13 +3,16 @@ import pygame
 
 import esper
 
+from src.ecs.components.c_input_command import CInputCommand, CommandPhase
+from src.ecs.components.c_velocity import CVelocity
 from src.ecs.systems.s_enemy_spawner import system_enemy_spawner
 
+from src.ecs.systems.s_input_player import system_input_player
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_rendering import system_rendering
 from src.ecs.systems.s_screen_bounce import system_screen_bounce
 
-from src.create.prefab_creator import create_enemy_spawner
+from src.create.prefab_creator import create_enemy_spawner, create_input_player, create_player_square
 
 
 class GameEngine:
@@ -47,6 +50,10 @@ class GameEngine:
             self.enemies_cfg = json.load(enemies_file)
         with open(f"assets/cfg/{config_num}/level_01.json", encoding="utf-8") as level_01_file:
             self.level_01_cfg = json.load(level_01_file)
+        with open(f"assets/cfg/{config_num}/player.json", encoding="utf-8") as player_cfg:
+            self.player_cfg = json.load(player_cfg)
+        with open(f"assets/cfg/{config_num}/bullet.json", encoding="utf-8") as bullet_cfg:
+            self.bullet_cfg = json.load(bullet_cfg)
 
     def run(self) -> None:
         self._create()
@@ -59,7 +66,12 @@ class GameEngine:
         self._clean()
 
     def _create(self):
+        self._player_entity = create_player_square(self._ecs_world, self.player_cfg, self.level_01_cfg["player_spawn"])
+        self._player_c_vel = self._ecs_world.component_for_entity(self._player_entity, CVelocity)
+        
         create_enemy_spawner(self._ecs_world, self.level_01_cfg)
+        
+        create_input_player(self._ecs_world)
 
     def _calculate_time(self):
         self._clock.tick(self._framerate)
@@ -67,6 +79,7 @@ class GameEngine:
 
     def _process_events(self):
         for event in pygame.event.get():
+            system_input_player(self._ecs_world, event, self._do_action)
             if event.type == pygame.QUIT:
                 self.is_running = False
 
@@ -84,3 +97,30 @@ class GameEngine:
 
     def _clean(self):
         pygame.quit()
+        
+    def _do_action(self, c_input: CInputCommand):
+        print(c_input.name, c_input.phase)
+        
+        if c_input.name == "PLAYER_LEFT":
+            if c_input.phase == CommandPhase.START:
+                self._player_c_vel.vel.x -= self.player_cfg["input_velocity"]
+            elif c_input.phase == CommandPhase.END:
+                self._player_c_vel.vel.x += self.player_cfg["input_velocity"]
+                
+        elif c_input.name == "PLAYER_RIGHT":
+            if c_input.phase == CommandPhase.START:
+                self._player_c_vel.vel.x += self.player_cfg["input_velocity"]
+            elif c_input.phase == CommandPhase.END:
+                self._player_c_vel.vel.x -= self.player_cfg["input_velocity"]
+                
+        elif c_input.name == "PLAYER_UP":
+            if c_input.phase == CommandPhase.START:
+                self._player_c_vel.vel.y -= self.player_cfg["input_velocity"]
+            elif c_input.phase == CommandPhase.END:
+                self._player_c_vel.vel.y += self.player_cfg["input_velocity"]
+                
+        elif c_input.name == "PLAYER_DOWN":
+            if c_input.phase == CommandPhase.START:
+                self._player_c_vel.vel.y += self.player_cfg["input_velocity"]
+            elif c_input.phase == CommandPhase.END:
+                self._player_c_vel.vel.y -= self.player_cfg["input_velocity"]
