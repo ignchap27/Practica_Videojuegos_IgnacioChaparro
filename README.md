@@ -1,5 +1,3 @@
-# EJEMPLO DE POTENCIAL SOLUCION EJERCICIO 1
+# Taller 2, Creación de Cuadrado Jugador
 
-Este proyecto muestra una potencial solución al ejercicio de la Semana 1. Se
-recomiendo usarlo como base para los siguientes talleres si el que realizaron
-salió muy diferente o incorrecto.
+Este proyecto muestra una solucion a crear un cuadrado de tipo jugador que sea controlado por el usuario, utilizando el patron command y el paradigma ECS.

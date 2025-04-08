@@ -6,7 +6,7 @@ from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.c_surface import CSurface
 
 
-def system_screen_bounce(world: esper.World, screen_rect: pygame.FRect):
+def system_screen_bounce(world: esper.World, screen_rect: pygame.Rect):
     query = world.get_components(CTransform, CVelocity, CSurface)
 
     for _, components in query:
@@ -14,7 +14,7 @@ def system_screen_bounce(world: esper.World, screen_rect: pygame.FRect):
         c_v: CVelocity = components[1]
         c_s: CSurface = components[2]
 
-        cuad_rect = c_s.surf.get_frect(topleft=c_t.pos)
+        cuad_rect = c_s.surf.get_rect(topleft=c_t.pos)
         if cuad_rect.left < 0 or cuad_rect.right > screen_rect.width:
             c_v.vel.x *= -1
             cuad_rect.clamp_ip(screen_rect)

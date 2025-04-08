@@ -14,7 +14,8 @@ from src.create.prefab_creator import create_enemy_spawner
 
 class GameEngine:
     def __init__(self) -> None:
-        self._load_config_files()
+        config_num = 'cfg_00'
+        self._load_config_files(config_num)
 
         pygame.init()
         pygame.display.set_caption(self.window_cfg["title"])
@@ -22,7 +23,7 @@ class GameEngine:
         self._screen = pygame.display.set_mode(
             (self.window_cfg["size"]["w"], self.window_cfg["size"]["h"]), pygame.SCALED
         )
-        self._screen_rect = self._screen.get_frect()
+        self._screen_rect = self._screen.get_rect()
 
         self.is_running = False
 
@@ -39,12 +40,12 @@ class GameEngine:
 
         self._ecs_world = esper.World()
 
-    def _load_config_files(self):
-        with open("assets/cfg/window.json", encoding="utf-8") as window_file:
+    def _load_config_files(self, config_num):
+        with open(f"assets/cfg/{config_num}/window.json", encoding="utf-8") as window_file:
             self.window_cfg = json.load(window_file)
-        with open("assets/cfg/enemies.json", encoding="utf-8") as enemies_file:
+        with open(f"assets/cfg/{config_num}/enemies.json", encoding="utf-8") as enemies_file:
             self.enemies_cfg = json.load(enemies_file)
-        with open("assets/cfg/level_01.json", encoding="utf-8") as level_01_file:
+        with open(f"assets/cfg/{config_num}/level_01.json", encoding="utf-8") as level_01_file:
             self.level_01_cfg = json.load(level_01_file)
 
     def run(self) -> None:
